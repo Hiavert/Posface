@@ -1,22 +1,32 @@
+# Imagen base con PHP y Apache
 FROM php:8.1-apache
 
 # Instalar extensiones necesarias
 RUN docker-php-ext-install pdo pdo_mysql
 
-# Copiar todo el código al contenedor
-COPY . /var/www/html/
-
-# Ajustar permisos para storage y bootstrap/cache
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
-
-# Activar mod_rewrite de Apache
+# Habilitar mod_rewrite
 RUN a2enmod rewrite
 
-# Copiar configuración de Apache personalizada
+# Copiar Composer desde imagen oficial
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Establecer directorio de trabajo
+WORKDIR /var/www/html
+
+# Copiar archivos del proyecto
+COPY . .
+
+# Instalar dependencias de Laravel
+RUN composer install --no-dev --optimize-autoloader
+
+# Limpiar y optimizar Laravel
+RUN php artisan config:clear && \
+    php artisan cache:clear && \
+    php artisan route:clear && \
+    php artisan view:clear && \
+    php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:cache
+
+# Copiar configuración de Apache
 COPY .docker/vhost.conf /etc/apache2/sites-available/000-default.conf
-
-# Exponer puerto 80
-EXPOSE 80
-
-# Comando para iniciar Apache en primer plano
-CMD ["apache2-foreground"]
