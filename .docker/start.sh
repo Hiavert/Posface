@@ -1,13 +1,6 @@
 #!/bin/sh
-# Esperar a que la DB esté disponible
-echo "⏳ Esperando MySQL..."
-until php -r "new PDO('mysql:host=${DB_HOST};dbname=${DB_DATABASE}', '${DB_USERNAME}', '${DB_PASSWORD}');" 2>/dev/null; do
-  sleep 3
-  echo "⏳ Esperando conexión..."
-done
+# Cambia el puerto 80 por el que te asigna Railway ($PORT)
+sed -i "s/80/${PORT}/g" /etc/apache2/sites-available/000-default.conf
 
-# Ejecutar migraciones
-php artisan migrate --force || true
-
-# Iniciar Apache
-exec apache2-foreground
+# Arranca Apache en foreground (importante para que el contenedor no se cierre)
+apache2ctl -D FOREGROUND

@@ -1,34 +1,28 @@
-FROM php:8.2-apache
+FROM php:8.1-apache
 
-# Instalar dependencias necesarias
-RUN apt-get update && apt-get install -y \
-    unzip git libpq-dev libzip-dev && \
-    docker-php-ext-install pdo pdo_mysql zip && \
-    a2enmod rewrite
+# Instala extensiones necesarias (pdo_mysql, zip, etc)
+RUN docker-php-ext-install pdo_mysql zip
 
-# Copiar archivos del proyecto
-WORKDIR /var/www/html
-COPY . .
+# Copia tu código a /var/www/html
+COPY . /var/www/html
 
-# Instalar Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-
-# Instalar dependencias Laravel
-RUN composer install --no-dev --optimize-autoloader
-
-# Limpiar y cachear configuración (sin romper build)
-RUN php artisan config:clear && \
-    php artisan route:clear && \
-    php artisan view:clear && \
-    php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache || true
-
-# Copiar virtualhost
+# Copia configuración personalizada de Apache si tienes (opcional)
 COPY .docker/vhost.conf /etc/apache2/sites-available/000-default.conf
 
-# Copiar script de inicio
-COPY .docker/start.sh /start.sh
-RUN chmod +x /start.sh
+# Copia el script de arranque
+COPY start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
 
-CMD ["/start.sh"]
+# Instala Composer y dependencias
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN composer install --no-dev --optimize-autoloader --working-dir=/var/www/html
+
+# Da permisos correctos a storage y bootstrap/cache
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Exponer puerto (aunque Railway asigna uno dinámico)
+EXPOSE 80
+
+# Arranca con nuestro script para usar el puerto correcto
+CMD ["/usr/local/bin/start.sh"]
+
