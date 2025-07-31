@@ -1,25 +1,26 @@
-# Imagen base con PHP y Apache
 FROM php:8.2-apache
 
-# Instalar extensiones necesarias
-RUN docker-php-ext-install pdo pdo_mysql
+# Instalar dependencias necesarias del sistema
+RUN apt-get update && apt-get install -y \
+    unzip \
+    git \
+    libzip-dev \
+    && docker-php-ext-install pdo pdo_mysql zip \
+    && a2enmod rewrite
 
-# Habilitar mod_rewrite
-RUN a2enmod rewrite
-
-# Copiar Composer desde imagen oficial
+# Copiar Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # Establecer directorio de trabajo
 WORKDIR /var/www/html
 
-# Copiar archivos del proyecto
+# Copiar proyecto
 COPY . .
 
 # Instalar dependencias de Laravel
 RUN composer install --no-dev --optimize-autoloader
 
-# Limpiar y optimizar Laravel
+# Optimizar Laravel
 RUN php artisan config:clear && \
     php artisan cache:clear && \
     php artisan route:clear && \
