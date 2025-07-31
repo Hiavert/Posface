@@ -1,46 +1,34 @@
-# Imagen base PHP con Apache y extensiones necesarias
 FROM php:8.2-apache
 
-# Instalar dependencias del sistema y extensiones PHP necesarias
+# Instalar dependencias necesarias
 RUN apt-get update && apt-get install -y \
-    unzip git libzip-dev zip \
-    && docker-php-ext-install pdo pdo_mysql zip
-
-# Habilitar mod_rewrite de Apache
-RUN a2enmod rewrite
-
-# Copiar archivo de configuración del VirtualHost
-COPY .docker/vhost.conf /etc/apache2/sites-available/000-default.conf
-
-# Establecer el directorio de trabajo
-WORKDIR /var/www/html
+    unzip git libpq-dev libzip-dev && \
+    docker-php-ext-install pdo pdo_mysql zip && \
+    a2enmod rewrite
 
 # Copiar archivos del proyecto
+WORKDIR /var/www/html
 COPY . .
 
 # Instalar Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Variables temporales para evitar errores de DB en build
-ENV CACHE_STORE=file
-ENV SESSION_DRIVER=file
-
-# Instalar dependencias PHP sin dev y optimizar autoload
+# Instalar dependencias Laravel
 RUN composer install --no-dev --optimize-autoloader
 
-# Limpiar caches que no dependen de la DB
-RUN php artisan config:clear && php artisan cache:clear && php artisan view:clear
+# Limpiar y cachear configuración (sin romper build)
+RUN php artisan config:clear && \
+    php artisan route:clear && \
+    php artisan view:clear && \
+    php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:cache || true
 
-# Dar permisos correctos al storage y bootstrap
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Copiar virtualhost
+COPY .docker/vhost.conf /etc/apache2/sites-available/000-default.conf
 
-# Copiar script de arranque
-COPY .docker/start.sh /usr/local/bin/start.sh
-RUN chmod +x /usr/local/bin/start.sh
+# Copiar script de inicio
+COPY .docker/start.sh /start.sh
+RUN chmod +x /start.sh
 
-# Exponer puerto 80
-EXPOSE 80
-
-# Comando de inicio: primero migraciones, luego Apache
-CMD ["/usr/local/bin/start.sh"]
-
+CMD ["/start.sh"]

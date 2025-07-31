@@ -1,13 +1,13 @@
-#!/bin/bash
-set -e
+#!/bin/sh
+# Esperar a que la DB esté disponible
+echo "⏳ Esperando MySQL..."
+until php -r "new PDO('mysql:host=${DB_HOST};dbname=${DB_DATABASE}', '${DB_USERNAME}', '${DB_PASSWORD}');" 2>/dev/null; do
+  sleep 3
+  echo "⏳ Esperando conexión..."
+done
 
-echo ">> Ejecutando migraciones..."
-php artisan migrate --force || echo ">> Migraciones fallaron o ya están aplicadas."
+# Ejecutar migraciones
+php artisan migrate --force || true
 
-echo ">> Optimizando caches..."
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-
-echo ">> Iniciando Apache..."
+# Iniciar Apache
 exec apache2-foreground
