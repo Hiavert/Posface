@@ -1,3 +1,5 @@
+<link href="{{ asset('vendor/adminlte/dist/css/adminlte.min.css') }}" rel="stylesheet">
+
 @extends('adminlte::page')
 
 @section('title', 'Bienvenido al Sistema de Gestión Documental')

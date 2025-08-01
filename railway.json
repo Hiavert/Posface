@@ -1,0 +1,22 @@
+{
+  "build": {
+    "use": "@nixpacks/tree/nixpkgs",
+    "nixpacksPlan": {
+      "phases": {
+        "setup": {
+          "aptPkgs": ["nodejs", "npm"]
+        },
+        "build": {
+          "cmds": [
+            "composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev",
+            "npm install",
+            "npm run build"
+          ]
+        }
+      }
+    }
+  },
+  "deploy": {
+    "startCommand": "php artisan serve --host=0.0.0.0 --port=${PORT}"
+  }
+}
