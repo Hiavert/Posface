@@ -1,38 +1,4 @@
-<?php
-
-namespace App\Console\Commands;
-
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
-
-class ResetCustomTables extends Command
-{
-    protected $signature = 'custom:reset-tables';
-    protected $description = 'Borra tablas específicas y crea tablas nuevas con query personalizado';
-
-    public function handle()
-    {
-        // DROP tablas que quieres borrar
-        DB::unprepared('
-            DROP TABLE IF EXISTS accesos;
-            DROP TABLE IF EXISTS cache; -- Si hay más pon aquí
-            DROP TABLE IF EXISTS cache_locks;
-            DROP TABLE IF EXISTS failed_jobs;
-            DROP TABLE IF EXISTS job_batches;
-            DROP TABLE IF EXISTS jobs;
-            DROP TABLE IF EXISTS migrations;
-            DROP TABLE IF EXISTS password_reset_tokens;
-            DROP TABLE IF EXISTS password_resets;
-            DROP TABLE IF EXISTS password_reset;
-            DROP TABLE IF EXISTS sessions;
-            DROP TABLE IF EXISTS users;
-            ');
-
-        $this->info('Tablas borradas correctamente.');
-
-        // Crea las tablas con el query que quieras (ejemplo)
-        DB::unprepared('
-            -- phpMyAdmin SQL Dump
+-- phpMyAdmin SQL Dump
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
@@ -122,7 +88,7 @@ DELIMITER ;
 --
 -- Estructura de tabla para la tabla `accesos`
 --
-
+DROP TABLE IF EXISTS accesos;
 CREATE TABLE `accesos` (
   `id_acceso` bigint(20) NOT NULL,
   `fk_id_rol` bigint(20) NOT NULL,
@@ -161,6 +127,7 @@ INSERT INTO `accesos` (`id_acceso`, `fk_id_rol`, `fk_id_objeto`, `created_at`, `
 --
 -- Estructura de tabla para la tabla `acuses`
 --
+DROP TABLE IF EXISTS acuses;
 
 CREATE TABLE `acuses` (
   `id_acuse` int(11) NOT NULL,
@@ -196,6 +163,7 @@ INSERT INTO `acuses` (`id_acuse`, `titulo`, `descripcion`, `fk_id_usuario_remite
 --
 -- Estructura de tabla para la tabla `acuses_adjuntos`
 --
+DROP TABLE IF EXISTS acuses_adjuntos;
 
 CREATE TABLE `acuses_adjuntos` (
   `id_adjunto` int(11) NOT NULL,
@@ -222,6 +190,7 @@ INSERT INTO `acuses_adjuntos` (`id_adjunto`, `fk_id_acuse`, `tipo`, `nombre_arch
 --
 -- Estructura de tabla para la tabla `acuses_transferencias`
 --
+DROP TABLE IF EXISTS acuses_transferencias;
 
 CREATE TABLE `acuses_transferencias` (
   `id_transferencia` int(11) NOT NULL,
@@ -248,6 +217,7 @@ INSERT INTO `acuses_transferencias` (`id_transferencia`, `fk_id_acuse`, `fk_id_u
 --
 -- Estructura de tabla para la tabla `auditoria`
 --
+DROP TABLE IF EXISTS auditoria;
 
 CREATE TABLE `auditoria` (
   `id_auditoria` int(11) NOT NULL,
@@ -264,6 +234,7 @@ CREATE TABLE `auditoria` (
 --
 -- Estructura de tabla para la tabla `bitacoras`
 --
+DROP TABLE IF EXISTS bitacoras;
 
 CREATE TABLE `bitacoras` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -404,6 +375,7 @@ INSERT INTO `bitacoras` (`id`, `user_id`, `usuario_nombre`, `accion`, `modulo`, 
 --
 -- Estructura de tabla para la tabla `cache`
 --
+DROP TABLE IF EXISTS cache;
 
 CREATE TABLE `cache` (
   `key` varchar(255) NOT NULL,
@@ -416,6 +388,7 @@ CREATE TABLE `cache` (
 --
 -- Estructura de tabla para la tabla `cache_locks`
 --
+DROP TABLE IF EXISTS cache_locks;
 
 CREATE TABLE `cache_locks` (
   `key` varchar(255) NOT NULL,
@@ -428,6 +401,7 @@ CREATE TABLE `cache_locks` (
 --
 -- Estructura de tabla para la tabla `documentos`
 --
+DROP TABLE IF EXISTS documentos;
 
 CREATE TABLE `documentos` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -456,6 +430,7 @@ INSERT INTO `documentos` (`id`, `tipo`, `numero`, `remitente`, `destinatario`, `
 --
 -- Estructura de tabla para la tabla `documentos_terna`
 --
+DROP TABLE IF EXISTS documentos_terna;
 
 CREATE TABLE `documentos_terna` (
   `id` bigint(20) NOT NULL,
@@ -513,6 +488,7 @@ INSERT INTO `documentos_terna` (`id`, `pago_terna_id`, `tipo`, `ruta_archivo`, `
 --
 -- Estructura de tabla para la tabla `documento_administrativo`
 --
+DROP TABLE IF EXISTS documento_administrativo;
 
 CREATE TABLE `documento_administrativo` (
   `id_documento` int(11) NOT NULL,
@@ -541,6 +517,7 @@ INSERT INTO `documento_administrativo` (`id_documento`, `fk_id_usuario`, `fk_id_
 --
 -- Estructura de tabla para la tabla `documento_envios`
 --
+DROP TABLE IF EXISTS documento_envios;
 
 CREATE TABLE `documento_envios` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -568,6 +545,7 @@ INSERT INTO `documento_envios` (`id`, `documento_id`, `user_id`, `mensaje`, `lei
 --
 -- Estructura de tabla para la tabla `elementos`
 --
+DROP TABLE IF EXISTS elementos;
 
 CREATE TABLE `elementos` (
   `id_elemento` int(11) NOT NULL,
@@ -600,6 +578,7 @@ INSERT INTO `elementos` (`id_elemento`, `nombre`, `descripcion`, `cantidad`, `fk
 --
 -- Estructura de tabla para la tabla `estado_documento`
 --
+DROP TABLE IF EXISTS estado_documento;
 
 CREATE TABLE `estado_documento` (
   `id_estado` int(11) NOT NULL,
@@ -623,7 +602,8 @@ INSERT INTO `estado_documento` (`id_estado`, `descripcion`, `created_at`, `updat
 --
 -- Estructura de tabla para la tabla `estado_pago`
 --
-
+DROP TABLE IF EXISTS estado_pago;
+DROP TABLE IF EXISTS password_reset_tokens;
 CREATE TABLE `estado_pago` (
   `id_estado_pago` int(11) NOT NULL,
   `descripcion` varchar(100) NOT NULL,
@@ -636,6 +616,7 @@ CREATE TABLE `estado_pago` (
 --
 -- Estructura de tabla para la tabla `expediente_docente`
 --
+DROP TABLE IF EXISTS expediente_docente;
 
 CREATE TABLE `expediente_docente` (
   `id_expediente_docente` int(11) NOT NULL,
@@ -652,6 +633,7 @@ CREATE TABLE `expediente_docente` (
 --
 -- Estructura de tabla para la tabla `expediente_estudiantil`
 --
+DROP TABLE IF EXISTS expediente_estudiantil;
 
 CREATE TABLE `expediente_estudiantil` (
   `id_expediente_estudiantil` int(11) NOT NULL,
@@ -669,6 +651,7 @@ CREATE TABLE `expediente_estudiantil` (
 --
 -- Estructura de tabla para la tabla `failed_jobs`
 --
+DROP TABLE IF EXISTS failed_jobs;
 
 CREATE TABLE `failed_jobs` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -685,6 +668,7 @@ CREATE TABLE `failed_jobs` (
 --
 -- Estructura de tabla para la tabla `jobs`
 --
+DROP TABLE IF EXISTS jobs;
 
 CREATE TABLE `jobs` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -720,6 +704,7 @@ INSERT INTO `jobs` (`id`, `queue`, `payload`, `attempts`, `reserved_at`, `availa
 --
 -- Estructura de tabla para la tabla `job_batches`
 --
+DROP TABLE IF EXISTS job_batches;
 
 CREATE TABLE `job_batches` (
   `id` varchar(255) NOT NULL,
@@ -739,6 +724,7 @@ CREATE TABLE `job_batches` (
 --
 -- Estructura de tabla para la tabla `log_login`
 --
+DROP TABLE IF EXISTS log_login;
 
 CREATE TABLE `log_login` (
   `id_log` int(11) NOT NULL,
@@ -755,6 +741,7 @@ CREATE TABLE `log_login` (
 --
 -- Estructura de tabla para la tabla `migrations`
 --
+DROP TABLE IF EXISTS migrations;
 
 CREATE TABLE `migrations` (
   `id` int(10) UNSIGNED NOT NULL,
@@ -767,6 +754,7 @@ CREATE TABLE `migrations` (
 --
 -- Estructura de tabla para la tabla `notificaciones`
 --
+DROP TABLE IF EXISTS notificaciones;
 
 CREATE TABLE `notificaciones` (
   `id_notificacion` int(11) NOT NULL,
@@ -804,6 +792,7 @@ INSERT INTO `notificaciones` (`id_notificacion`, `titulo`, `mensaje`, `fk_id_usu
 --
 -- Estructura de tabla para la tabla `notifications`
 --
+DROP TABLE IF EXISTS notifications;
 
 CREATE TABLE `notifications` (
   `id` char(36) NOT NULL,
@@ -854,6 +843,7 @@ INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `
 --
 -- Estructura de tabla para la tabla `objetos`
 --
+DROP TABLE IF EXISTS objetos;
 
 CREATE TABLE `objetos` (
   `id_objeto` bigint(20) NOT NULL,
@@ -890,6 +880,7 @@ INSERT INTO `objetos` (`id_objeto`, `nombre_objeto`, `tipo_objeto`, `descripcion
 --
 -- Estructura de tabla para la tabla `pagos_terna`
 --
+DROP TABLE IF EXISTS pagos_terna;
 
 CREATE TABLE `pagos_terna` (
   `id` bigint(20) NOT NULL,
@@ -927,6 +918,7 @@ INSERT INTO `pagos_terna` (`id`, `codigo`, `descripcion`, `estado`, `fecha_defen
 --
 -- Estructura de tabla para la tabla `password_resets`
 --
+DROP TABLE IF EXISTS password_resets;
 
 CREATE TABLE `password_resets` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -1065,7 +1057,7 @@ INSERT INTO `roles` (`id_rol`, `nombre_rol`, `descripcion_rol`, `estado_rol`, `c
 --
 -- Estructura de tabla para la tabla `sessions`
 --
-
+DROP TABLE IF EXISTS sessions;
 CREATE TABLE `sessions` (
   `id` varchar(255) NOT NULL,
   `user_id` int(11) DEFAULT NULL,
@@ -1970,9 +1962,3 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-
-        ');
-
-        $this->info('Tablas creadas con tu query personalizado.');
-    }
-}

@@ -7,15 +7,30 @@ use Illuminate\Support\Facades\DB;
 
 class RunCustomQuery extends Command
 {
+    // Nombre del comando en consola
     protected $signature = 'run:custom-query';
-    protected $description = 'Ejecuta el query SQL gigante desde un archivo';
+
+    // Descripción del comando
+    protected $description = 'Ejecuta un query gigante desde un archivo SQL';
 
     public function handle()
     {
-        $sql = file_get_contents(database_path('scripts/custom_query.sql'));
+        $path = database_path('scripts/posface.sql');
 
-        DB::unprepared($sql);
+        if (!file_exists($path)) {
+            $this->error("No se encontró el archivo SQL en: $path");
+            return 1; // Error
+        }
 
-        $this->info('Query ejecutado correctamente!');
+        $sql = file_get_contents($path);
+
+        try {
+            DB::unprepared($sql);
+            $this->info('Query gigante ejecutado con éxito.');
+            return 0; // Éxito
+        } catch (\Exception $e) {
+            $this->error('Error al ejecutar el query: ' . $e->getMessage());
+            return 1; // Error
+        }
     }
 }
