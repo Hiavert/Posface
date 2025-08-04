@@ -1,4 +1,5 @@
-<link href="{{ asset('vendor/adminlte/dist/css/adminlte.min.css') }}" rel="stylesheet">
+{{-- Vista modificada para Vite --}}
+@vite(['resources/css/app.css', 'resources/js/app.js'])
 
 @extends('adminlte::page')
 
@@ -171,9 +172,17 @@
 
 @section('js')
 <script>
-    $(document).ready(function() {
+    document.addEventListener('DOMContentLoaded', function() {
         console.log("💫 Dashboard cargado con animaciones");
-        $('.welcome-card').hide().fadeIn(800);
+        document.querySelectorAll('.welcome-card').forEach(card => {
+            card.style.display = 'none';
+            setTimeout(() => {
+                card.style.display = 'block';
+                card.style.opacity = 0;
+                card.style.transition = 'opacity 0.8s';
+                setTimeout(() => card.style.opacity = 1, 10);
+            }, 100);
+        });
     });
 </script>
 @stop

@@ -1,8 +1,13 @@
+# Logs y archivos temporales
 *.log
 .DS_Store
+
+# Archivos de entorno
 .env
 .env.backup
 .env.production
+
+# Configuración de IDEs
 .phpactor.json
 .phpunit.result.cache
 /.fleet
@@ -12,13 +17,24 @@
 /.vscode
 /.zed
 /auth.json
+
+# Dependencias y compilados
 /node_modules
-/public/build
+/vendor
+
+# Assets compilados (NO ignorar build en Railway)
+# /public/build   <-- ❌ lo quitamos para que se suba a Railway
 /public/hot
+
+# Archivos de storage (mantener ignorado, Railway no los persiste)
+# Public storage solo se genera con artisan storage:link
 /public/storage
+
+# Claves y carpetas internas de storage
 /storage/*.key
 /storage/pail
-/vendor
+
+# Otros
 Homestead.json
 Homestead.yaml
 npm-debug.log
